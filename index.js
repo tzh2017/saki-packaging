@@ -24,24 +24,23 @@ function readFile(dir) {
   return fs.readFileSync(dir, "utf8");
 }
 
-function match(str) {
+function match(reg, group, str) {
   let list = [];
   let matched;
   while ((matched = reg.exec(str)) != null) {
-    const saki = matched[regSakiGroup];
+    const saki = matched[group];
     list.push(saki);
   }
   return list;
 }
 
-function scanDirKeys(dir) {
+function scanDirKeys({ dir, exts, reg, group }) {
+  const keys = new Set();
   const fileList = [];
   traverse(dir, exts, fileList);
-
-  const keys = new Set();
   fileList.forEach((file) => {
     const str = readFile(file);
-    const list = match(str);
+    const list = match(reg, group, str);
     list.forEach((e) => keys.add(e));
   });
   return keys;

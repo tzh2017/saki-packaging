@@ -1,13 +1,11 @@
 const { match } = require("../index");
 
 describe("match", function () {
-  it("$t", function () {
+  it("reg group keys", function () {
+    const reg = new RegExp("([0-9A-Z]{6})", 'g');
+    const group = 1;
     const str = "{{ $t('123ABC') }} {{ i18n.t('ABC123') }} ";
-    expect(match(str)).toEqual(["123ABC", "ABC123"]);
-  });
-
-  it("i18n.t", function () {
-    const str = " return i18n.t('123ABC');\n i18n.t('ABC123') ";
-    expect(match(str)).toEqual(["123ABC", "ABC123"]);
+    const expected = ["123ABC", "ABC123"];
+    expect(match(reg, group, str)).toEqual(expected);
   });
 });
