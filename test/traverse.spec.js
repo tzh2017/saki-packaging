@@ -1,10 +1,12 @@
 const { traverse } = require("../index");
 
 describe("traverse", function () {
-  it("scan file", function () {
+  it("scan files", function () {
     const dir = "./examples";
     const actual = [];
     traverse(dir, actual);
-    expect(actual).toEqual(["examples/index.js"]);
+    expect(actual.sort()).toEqual(
+      ["examples/index.js", "examples/components/index.vue"].sort()
+    );
   });
 });
