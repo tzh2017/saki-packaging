@@ -6,7 +6,11 @@ describe("traverse", function () {
     const actual = [];
     traverse(dir, actual);
     expect(actual.sort()).toEqual(
-      ["examples/index.js", "examples/components/index.vue"].sort()
+      [
+        "examples/index.js",
+        "examples/index2.js",
+        "examples/components/index.vue",
+      ].sort()
     );
   });
 });
