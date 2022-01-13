@@ -11,7 +11,7 @@ function traverse(dir, list) {
   fs.readdirSync(dir).forEach((file) => {
     let fullPath = path.join(dir, file);
     if (fs.lstatSync(fullPath).isDirectory()) {
-      traverseDir(fullPath);
+      traverse(fullPath);
     } else {
       if (exts.includes(getFileExt(fullPath))) {
         list.push(fullPath);

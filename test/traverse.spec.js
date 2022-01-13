@@ -1,4 +1,4 @@
-const { traverse, match } = require("../index");
+const { traverse } = require("../index");
 
 describe("traverse", function () {
   it("scan file", function () {
