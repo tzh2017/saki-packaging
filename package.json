@@ -1,0 +1,27 @@
+{
+  "name": "saki-packaging",
+  "version": "1.0.0",
+  "description": "saki-packaging",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tzh2017/saki-packaging.git"
+  },
+  "keywords": [
+    "i18n",
+    "saki"
+  ],
+  "author": "chris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tzh2017/saki-packaging/issues"
+  },
+  "homepage": "https://github.com/tzh2017/saki-packaging#readme",
+  "devDependencies": {
+    "jest": "^27.4.7"
+  }
+}
