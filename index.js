@@ -1,19 +1,26 @@
 const fs = require("fs");
 const path = require("path");
-const { reg, regSakiGroup } = require("./config");
+const { exts, reg, regSakiGroup } = require("./config");
 
-module.exports.traverse = function (dir, list) {
+function getFileExt(dir) {
+  const index = dir.indexOf(".");
+  return index < 0 ? "" : dir.substring(index);
+}
+
+function traverse(dir, list) {
   fs.readdirSync(dir).forEach((file) => {
     let fullPath = path.join(dir, file);
     if (fs.lstatSync(fullPath).isDirectory()) {
       traverseDir(fullPath);
     } else {
-      list.push(fullPath);
+      if (exts.includes(getFileExt(fullPath))) {
+        list.push(fullPath);
+      }
     }
   });
-};
+}
 
-module.exports.match = function (str) {
+function match(str) {
   let list = [];
   let matched;
   while ((matched = reg.exec(str)) != null) {
@@ -21,4 +28,10 @@ module.exports.match = function (str) {
     list.push(saki);
   }
   return list;
+}
+
+module.exports = {
+  getFileExt,
+  traverse,
+  match,
 };
