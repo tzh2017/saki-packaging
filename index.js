@@ -2,11 +2,11 @@ const fs = require("fs");
 const path = require("path");
 const { dir, exts, reg, regSakiGroup } = require("./config");
 
-function traverse(dir, list) {
+function traverse(dir, exts, list) {
   fs.readdirSync(dir).forEach((file) => {
     let fullPath = path.join(dir, file);
     if (fs.lstatSync(fullPath).isDirectory()) {
-      traverse(fullPath, list);
+      traverse(fullPath, exts, list);
     } else {
       if (exts.includes(getFileExt(fullPath))) {
         list.push(fullPath);
@@ -36,7 +36,7 @@ function match(str) {
 
 function scanDirKeys(dir) {
   const fileList = [];
-  traverse(dir, fileList);
+  traverse(dir, exts, fileList);
 
   const keys = new Set();
   fileList.forEach((file) => {
