@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { exts, reg, regSakiGroup } = require("./config");
+const { dir, exts, reg, regSakiGroup } = require("./config");
 
 function traverse(dir, list) {
   fs.readdirSync(dir).forEach((file) => {
@@ -34,9 +34,23 @@ function match(str) {
   return list;
 }
 
+function scanDirKeys(dir) {
+  const fileList = [];
+  traverse(dir, fileList);
+
+  const keys = new Set();
+  fileList.forEach((file) => {
+    const str = readFile(file);
+    const list = match(str);
+    list.forEach((e) => keys.add(e));
+  });
+  return keys;
+}
+
 module.exports = {
   traverse,
   getFileExt,
   readFile,
   match,
+  scanDirKeys,
 };
