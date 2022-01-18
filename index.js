@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const config = require("./config");
+const fetch = require("node-fetch-commonjs");
 
 function getFilepaths(dir, exts, list) {
   function traverse(dir, exts, list) {
@@ -39,29 +40,30 @@ function match(reg, group, str) {
   return list;
 }
 
-function scan({ dir, exts, reg, group, log }) {
+function scan(config) {
   const map = {};
 
-  const fileList = getFilepaths(dir, exts);
-  log && console.log(`扫描到${fileList.length}个文件`);
+  const fileList = getFilepaths(config.dir, config.exts);
+  config.log && console.log(`扫描到${fileList.length}个文件`);
 
   fileList.forEach((file) => {
-    log && console.log(file);
+    config.log && console.log(file);
     const str = readFile(file);
-    const list = match(reg, group, str);
-    log && console.log(list);
+    const list = match(config.reg, config.group, str);
+    config.log && console.log(list);
 
     list.forEach((key) => (map[key] = ""));
   });
 
-  log && console.log(map);
+  config.log && console.log(map);
   return map;
 }
 
 async function fetchLang(lang) {
   const url = `https://dkprod-api.bipocloud.com/services/grappa/dicts/file/${lang}`;
-  const { data } = await got(url).json();
-  return JSON.parse(data);
+  const res = await fetch(url);
+  const data = await res.json();
+  return JSON.parse(data.data);
 }
 
 module.exports = {
