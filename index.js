@@ -58,8 +58,10 @@ function scan({ dir, exts, reg, group, log }) {
   return map;
 }
 
-function fetchLang(lang) {
+async function fetchLang(lang) {
   const url = `https://dkprod-api.bipocloud.com/services/grappa/dicts/file/${lang}`;
+  const { data } = await got(url).json();
+  return JSON.parse(data);
 }
 
 module.exports = {
@@ -68,4 +70,5 @@ module.exports = {
   readFile,
   match,
   scan,
+  fetchLang,
 };
