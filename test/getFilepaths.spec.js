@@ -1,11 +1,10 @@
-const { traverse } = require("../index");
+const { getFilepaths } = require("../index");
 
-describe("traverse", function () {
+describe("getFilepaths", function () {
   it("scan files 1", function () {
     const dir = "./examples";
     const exts = [".vue"];
-    const actual = [];
-    traverse(dir, exts, actual);
+    const actual = getFilepaths(dir, exts);
 
     const expected = ["examples/components/index.vue"].sort();
     expect(actual.sort()).toEqual(expected);
@@ -14,8 +13,7 @@ describe("traverse", function () {
   it("scan files 2", function () {
     const dir = "./examples";
     const exts = [".js", ".vue"];
-    const actual = [];
-    traverse(dir, exts, actual);
+    const actual = getFilepaths(dir, exts);
 
     const expected = [
       "examples/index.js",

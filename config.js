@@ -1,6 +1,7 @@
 module.exports = {
-  dir: "./examples",
+  dir: "/Users/chris/Works/daisy",
   exts: [".js", ".ts", ".vue", ".json"],
-  reg: new RegExp(/(i18n\.t|\$t)\(['"]([0-9A-Z]{6})['"]\)/, "g"),
+  reg: new RegExp(/(['"]([0-9A-Z]{6})['"])/, "g"),
   group: 2,
+  log: true,
 };
