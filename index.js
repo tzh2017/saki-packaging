@@ -50,7 +50,7 @@ function match(reg, group, str) {
 }
 
 function scan(config) {
-  const map = {};
+  const result = [];
 
   const fileList = getFilepaths(config.dir, config.exts, config.excludePaths);
   config.log && console.log(`扫描到${fileList.length}个文件`);
@@ -61,9 +61,9 @@ function scan(config) {
     const list = match(config.reg, config.group, str);
     config.log && console.log(list);
 
-    list.forEach((key) => (map[key] = ""));
+    result.push(...list);
   });
-  return map;
+  return result;
 }
 
 async function fetchLang(lang) {
@@ -77,15 +77,13 @@ async function fetchLangs(langs) {
   return Promise.all(langs.map((lang) => fetchLang(lang)));
 }
 
-function getLocals(local, remotes) {
+function getLocals(list, remotes) {
   const locals = remotes.map((_) => ({}));
-  for (const key in local) {
+  for (const key of list) {
     for (let index = 0; index < remotes.length; index++) {
       const remote = remotes[index];
-      if (Object.hasOwnProperty.call(local, key)) {
-        const value = remote[key];
-        value && (locals[index][key] = value);
-      }
+      const value = remote[key];
+      value && (locals[index][key] = value);
     }
   }
   return locals;
@@ -118,8 +116,8 @@ function writeFiles(langs, remotes) {
 async function main() {
   const langs = config.langs;
   const remotes = await fetchLangs(langs);
-  const local = scan(config);
-  const locals = getLocals(local, remotes);
+  const list = scan(config);
+  const locals = getLocals(list, remotes);
   writeFiles(langs, locals);
 }
 
