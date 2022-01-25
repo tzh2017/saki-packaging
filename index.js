@@ -3,10 +3,19 @@ const path = require("path");
 const config = require("./config");
 const fetch = require("node-fetch-commonjs");
 
-function getFilepaths(dir, exts, list) {
+function getFilepaths(dir, exts, excludePaths) {
+  const excludes = (excludePaths || []).map((e) => new RegExp(e));
+  function isExcluded(path) {
+    return excludes.some((reg) => reg.test(path));
+  }
+
   function traverse(dir, exts, list) {
     fs.readdirSync(dir).forEach((file) => {
-      let fullPath = path.join(dir, file);
+      const fullPath = path.join(dir, file);
+
+      if (isExcluded(fullPath)) {
+        return;
+      }
       if (fs.lstatSync(fullPath).isDirectory()) {
         traverse(fullPath, exts, list);
       } else {
@@ -43,7 +52,7 @@ function match(reg, group, str) {
 function scan(config) {
   const map = {};
 
-  const fileList = getFilepaths(config.dir, config.exts);
+  const fileList = getFilepaths(config.dir, config.exts, config.excludePaths);
   config.log && console.log(`扫描到${fileList.length}个文件`);
 
   fileList.forEach((file) => {
@@ -54,8 +63,6 @@ function scan(config) {
 
     list.forEach((key) => (map[key] = ""));
   });
-
-  config.log && console.log(map);
   return map;
 }
 
@@ -66,6 +73,56 @@ async function fetchLang(lang) {
   return JSON.parse(data.data);
 }
 
+async function fetchLangs(langs) {
+  return Promise.all(langs.map((lang) => fetchLang(lang)));
+}
+
+function getLocals(local, remotes) {
+  const locals = remotes.map((_) => ({}));
+  for (const key in local) {
+    for (let index = 0; index < remotes.length; index++) {
+      const remote = remotes[index];
+      if (Object.hasOwnProperty.call(local, key)) {
+        const value = remote[key];
+        value && (locals[index][key] = value);
+      }
+    }
+  }
+  return locals;
+}
+
+function deleteDir(dir) {
+  let files = fs.readdirSync(dir);
+  for (var i = 0; i < files.length; i++) {
+    let newPath = path.join(dir, files[i]);
+    let stat = fs.statSync(newPath);
+    if (stat.isDirectory()) {
+      removeDir(newPath);
+    } else {
+      fs.unlinkSync(newPath);
+    }
+  }
+  fs.rmdirSync(dir);
+}
+
+function writeFiles(langs, remotes) {
+  deleteDir("./dist");
+  fs.mkdirSync("./dist");
+  langs.forEach((lang, i) => {
+    const path = `./dist/${lang}.json`;
+    const json = JSON.stringify(remotes[i], null, 4);
+    fs.writeFileSync(path, json, "utf-8");
+  });
+}
+
+async function main() {
+  const langs = config.langs;
+  const remotes = await fetchLangs(langs);
+  const local = scan(config);
+  const locals = getLocals(local, remotes);
+  writeFiles(langs, locals);
+}
+
 module.exports = {
   getFilepaths,
   getFileExt,
@@ -73,4 +130,6 @@ module.exports = {
   match,
   scan,
   fetchLang,
+  fetchLangs,
+  main,
 };

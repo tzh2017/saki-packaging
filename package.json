@@ -2,7 +2,7 @@
   "name": "saki-packaging",
   "version": "1.0.0",
   "description": "saki-packaging",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch"
